@@ -1,7 +1,8 @@
-from app_dir import db, login
+from hashlib import md5
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+from app_dir import db, login
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # 继承UserMixin之后， User就有了一下四个属性（或方法），这四项Flask_Login工作的时候需要使用
@@ -16,6 +17,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -25,6 +28,12 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
+
+
 
 
 # Flask_Login 要求我们自己写一个提供用户id（id是字符串形式）返回用户实例的函数以供他调用, 这个函数用 login对象的user_loader装饰器装饰
