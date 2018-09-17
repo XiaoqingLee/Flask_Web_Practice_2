@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from app_dir.models import User
+from flask_login import current_user
 
 
 class LoginForm(FlaskForm):
@@ -28,4 +29,14 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Email address occupied, please use a different one.')
 
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
+    submit = SubmitField('Submit')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None and user != current_user:
+            raise ValidationError('Username occupied, please use a different one.')
 
