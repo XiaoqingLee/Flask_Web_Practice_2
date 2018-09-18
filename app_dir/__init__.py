@@ -20,6 +20,7 @@ login.login_view = 'login'
 
 
 if not app.debug:
+    # 邮件错误输出
     if app.config['MAIL_SERVER']:
         auth = None
         if app.config['MAIL_USERNAME']:
@@ -35,8 +36,26 @@ if not app.debug:
             credentials=auth,
             secure=secure
         )
+        mail_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [ in %(pathname)s:%(lineno)d ]'
+        ))
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
+    # 本地日志错误输出
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/microblog.log',
+                                       maxBytes=1024000,
+                                       backupCount=50
+                                       )
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [ in %(pathname)s:%(lineno)d ]'
+    ))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+    # 针对应用本身
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('Microblog starup')
 
 
 from app_dir import routes, models, errors

@@ -36,7 +36,7 @@ class EditProfileForm(FlaskForm):
     submit = SubmitField('Submit')
 
     def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None and user != current_user:
+        if username.data != current_user.username  and \
+                User.query.filter_by(username=username.data).first() is not None:
             raise ValidationError('Username occupied, please use a different one.')
 
