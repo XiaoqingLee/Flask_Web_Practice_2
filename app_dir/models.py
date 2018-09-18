@@ -1,8 +1,10 @@
 from hashlib import md5
 from datetime import datetime
-from app_dir import db, login
+from time import time
+from app_dir import app, db, login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
 
 
 # 关系表，实现User到User的多对多关系
@@ -73,6 +75,25 @@ class User(UserMixin, db.Model):
         ).filter(following_relationship_table.c.fan_id == self.id)
         own_posts = Post.query.filter_by(user_id=self.id)
         return stars_posts.union(own_posts).order_by(Post.timestamp.desc())
+
+    def generate_reset_password_token(self, expires_in_seconds=60*20):
+        return jwt.encode(
+            payload={'request_user_id': self.id, 'exp': time() + expires_in_seconds},
+            key=app.config['SECRET_KEY'],
+            algorithm='HS256',
+        ).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            # 如果已超时（当前time()大于'exp'） 或jwt已被更改无法SECRET_KEY匹配, 则decode结果为空
+            user_id = jwt.decode(jwt=token,
+                                 key=app.config['SECRET_KEY'],
+                                 algorithms=['HS256']
+                                 )['request_user_id']
+        except:
+            return
+        return User.query.get(user_id)
 
 
 # Flask_Login 要求我们自己写一个提供用户id（id是字符串形式）返回用户实例的函数以供他调用, 这个函数用 login对象的user_loader装饰器装饰
