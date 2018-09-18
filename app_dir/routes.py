@@ -62,7 +62,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash('Invalid username or password.')
             return redirect(url_for('login'))
         login_user(user=user, remember=form.remember_me.data)
         # request.args是一个字典，用get访问比较安全
@@ -139,7 +139,7 @@ def before_request():
 def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash('User {} not found'.format(username))
+        flash('User {} not found.'.format(username))
         return redirect(url_for('index'))
     if user == current_user:
         flash('You can not follow yourself!')
@@ -190,12 +190,12 @@ def reset_password(token):
         return redirect(url_for('index'))
     user = User.verify_reset_password_token(token)
     if not user:
-        flash('Invalid token !')
+        flash('Invalid token!')
         return redirect(url_for('index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset')
+        flash('Your password has been reset.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
