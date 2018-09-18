@@ -65,8 +65,6 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user=user, remember=form.remember_me.data)
-        flash('Login succeed for user {}, remember_me={}.'.format(
-            form.username.data, form.remember_me.data))
         # request.args是一个字典，用get访问比较安全
         next_page = request.args.get('next') # next_page的值是路径，不是端点名
         # 没有next参数或者next参数值是个有着完整协议和域名的非本地相对路径请求（如http://www.baidu.com）
@@ -92,7 +90,7 @@ def register():
         new_user.set_password(form.password.data)
         db.session.add(new_user)
         db.session.commit()
-        flash('Congratulations you are now a registered user. You can login now!')
+        flash('Congratulations you are now a registered user. You can log in now!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -127,7 +125,6 @@ def edit_profile():
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile', form=form)
-
 
 
 @app.before_request
