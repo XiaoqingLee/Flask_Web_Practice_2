@@ -40,3 +40,9 @@ class EditProfileForm(FlaskForm):
                 User.query.filter_by(username=username.data).first() is not None:
             raise ValidationError('Username occupied, please use a different one.')
 
+
+class PostForm(FlaskForm):
+    post = TextAreaField('Say something',
+                         validators=[DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField('Submit')
+

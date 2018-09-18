@@ -66,12 +66,11 @@ class User(UserMixin, db.Model):
         return self.stars.filter(following_relationship_table.c.star_id == user.id).count() > 0
 
     def stars_posts(self):
-        # 尝试先filter_by 然后join 提高效率
         # post 表和 following_relationship_table 联结
-        stars_posts =  Post.query.join(
-            following_relationship_table.filter(following_relationship_table.c.fan_id == self.id),
-            (Post.user_id == following_relationship_table.c.star_id)
-        )
+        stars_posts = Post.query.join(
+            following_relationship_table,
+            (following_relationship_table.c.star_id == Post.user_id)
+        ).filter(following_relationship_table.c.fan_id == self.id)
         own_posts = Post.query.filter_by(user_id=self.id)
         return stars_posts.union(own_posts).order_by(Post.timestamp.desc())
 
