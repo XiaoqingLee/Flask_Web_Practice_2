@@ -1,5 +1,6 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request
+from guess_language import guess_language
+from flask import render_template, flash, redirect, url_for, request, g, jsonify
 from app_dir import app, db
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -7,9 +8,6 @@ from app_dir.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
                             ResetPasswordForm, ResetPasswordRequestForm
 from app_dir.models import User, Post
 from app_dir.email import send_password_reset_email
-from guess_language import guess_language
-from flask import g
-from flask import jsonify
 from app_dir.translate import translate
 
 
