@@ -37,6 +37,20 @@
 {% block scripts %}
     {{ super() }}
     {{ moment.include_moment() }}
+    <script>
+        var translate = function (sourceElemSelector, targetElemSelector, sourceLang, targetLang){
+            $(targetElemSelector).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+            $.post('/translate', {
+                text: $(sourceElemSelector).text(),
+                source_language: sourceLang,
+                target_language: targetLang
+            }).done(function(response_json){
+                $(targetElemSelector).text(response_json['text']);
+            }).fail(function(){
+                $(targetElemSelector).text('Error: Fail to connect to the host!');
+            });
+        };
+    </script>
 {% endblock %}
 
 {% block content %}

@@ -15,6 +15,7 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = [os.environ.get('ADMIN')]
+    TRANSLATION_SERVICE_API = os.environ.get('TRANSLATION_SERVICE_API')
 
 
 
