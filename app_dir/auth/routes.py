@@ -91,3 +91,16 @@ def reset_password(token):
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
 
+
+'''
+    注意！ 这里出现了三种‘前缀’： 
+    1.url_for('auth.login') 
+    # auth 是蓝本名字。
+    2.@route('/login')  蓝本注册时候有prefix=auth 
+    # '/login'是加prefix之前的路径名，完整路径名是'/auth/login'
+    3.render_template('auth/login.html') 
+    # 模板login.html文件在${默认templates目录}下的auth目录下。 
+    # 如果构造蓝本的时候没有制定templates参数, 那么默认模板目录还
+    # 是app_dir下的templates目录:
+'''
+
