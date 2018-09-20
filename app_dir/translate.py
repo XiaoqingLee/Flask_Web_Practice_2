@@ -1,10 +1,10 @@
 import requests
-from app_dir import app
+from flask import current_app
 
 
 def translate(text, source_language, target_language):
 
-    url = app.config['TRANSLATION_SERVICE_API'].format(
+    url = current_app.config['TRANSLATION_SERVICE_API'].format(
         source_language,
         target_language,
         text
@@ -19,5 +19,4 @@ def translate(text, source_language, target_language):
         print(r.status_code)
         return 'Error: Fail to connect to translation service provider.'
     return r.json()[0][0][0]
-
 

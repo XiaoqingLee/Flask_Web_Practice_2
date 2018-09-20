@@ -1,11 +1,11 @@
 from hashlib import md5
 from datetime import datetime
 from time import time
-from app_dir import app, db, login
+from flask import current_app
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
-
+from app_dir import db, login
 
 # 关系表，实现User到User的多对多关系
 # A fan follows a star. The left User follows the right User.
@@ -79,7 +79,7 @@ class User(UserMixin, db.Model):
     def generate_reset_password_token(self, expires_in_seconds=60*20):
         return jwt.encode(
             payload={'request_user_id': self.id, 'exp': time() + expires_in_seconds},
-            key=app.config['SECRET_KEY'],
+            key=current_app.config['SECRET_KEY'],
             algorithm='HS256',
         ).decode('utf-8')
 
@@ -88,7 +88,7 @@ class User(UserMixin, db.Model):
         try:
             # 如果已超时（当前time()大于'exp'） 或jwt已被更改无法SECRET_KEY匹配, 则decode结果为空
             user_id = jwt.decode(jwt=token,
-                                 key=app.config['SECRET_KEY'],
+                                 key=current_app.config['SECRET_KEY'],
                                  algorithms=['HS256']
                                  )['request_user_id']
         except:
@@ -111,6 +111,4 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
-
-
 

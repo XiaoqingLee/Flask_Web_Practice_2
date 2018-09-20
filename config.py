@@ -1,7 +1,11 @@
 import os
-basedir = os.path.abspath(os.path.dirname(__file__))
+from dotenv import load_dotenv
 
-# 静态类，不必实例化
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
+
+
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'who-will-know-what-am-i'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
@@ -16,7 +20,4 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = [os.environ.get('ADMIN')]
     TRANSLATION_SERVICE_API = os.environ.get('TRANSLATION_SERVICE_API')
-
-
-
 

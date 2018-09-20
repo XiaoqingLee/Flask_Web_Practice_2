@@ -3,4 +3,5 @@ venv
 *.db
 *.sh
 logs/*.log
+.env
 
